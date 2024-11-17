@@ -11,8 +11,7 @@ export class UserController {
    */
   @Post()
   async insertUser(
-    @Body() dto: InsertUserDto
-  ) {
+    @Body() dto: InsertUserDto ) {
     return await this.userService.insertUser(dto)
   }
 
