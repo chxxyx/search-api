@@ -1,5 +1,6 @@
-import { Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { SearchService } from './search.service';
+import { SaveSearchKeywordDto } from './dto/save.search.keyword.dto';
 
 @Controller('api/search')
 export class SearchController {
@@ -9,7 +10,10 @@ export class SearchController {
    * 검색어 저장 
    */
   @Post('keywords')
-  insertSearchKeyword() {}
+  async insertSearchKeyword(
+    @Body() dto: SaveSearchKeywordDto ) {
+    return await this.searchService.saveSearchKeyword(dto);
+  }
 
   /**
    * 인기 검색어 조회
