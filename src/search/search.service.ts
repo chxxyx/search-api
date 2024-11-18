@@ -1,7 +1,6 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { SaveSearchKeywordDto } from './dto/save.search.keyword.dto';
-import { group } from 'console';
 import { GetTendingKeywordsDto } from './dto/get.trending.keywords.dto';
 
 @Injectable()
@@ -103,7 +102,6 @@ export class SearchService {
                 filterConditions.user.userInfo.region = region;
             }
 
-            console.log(filterConditions)
             const keyword = await this.prismaService.searchkeyword.groupBy({
                 by: ['keyword'],
                 where: filterConditions,
