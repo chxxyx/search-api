@@ -11,7 +11,14 @@ export class SearchService {
     ) {}
 
     /**
-     *  동일한 유저와 검색어, 동일한 아이피와 검색어를 한 번 더 요청할 경우에는 ?
+     * 
+     * @param dto :
+     * - 비회원
+     *   keyword(String), ip(String)
+     * - 회원 :
+     *   keyword(String), email(String)
+     * @returns : 
+     * { statusCode, search data }
      * 
      */
     async saveSearchKeyword(dto: SaveSearchKeywordDto) {
@@ -19,16 +26,17 @@ export class SearchService {
         const { keyword, email, ip } = dto;
     
         // 검색어 테이블에 유저 식별 값을 저장하기 위한 변수
-        let userId;
+        let userId: any;
 
         // 회원이 요청한 경우 
         // 요청 이메일 값이 존재하는 지 확인 
         if (email) {
-            // 회원 검색 처리
+            // 요청 값으로 회원 이메일 조회
             const user = await this.prismaService.user.findUnique({
                 where: { email: email },
             });
         
+            // 없을 경우 404 에러 처리
             if (!user) {
                 throw new NotFoundException('일치하는 이메일이 존재하지 않습니다.');
             };
@@ -48,7 +56,7 @@ export class SearchService {
             });
 
             if (existingKeyword) {
-                // 이미 존재하면 예외를 던짐
+                // 이미 존재하면 예외 처리
                 throw new ConflictException('이미 동일한 검색어가 저장되어 있습니다.');
             }
 
@@ -66,7 +74,7 @@ export class SearchService {
                 saveData,
             };
         } catch (error) {
-            if (error.code === 'P2002') {  // Prisma에서 발생하는 중복 에러 코드
+            if (error.code === 'P2002') {  // 동일 유저의 검색어 중복 에러 코드
                 throw new ConflictException('이미 동일한 검색어가 저장되어 있습니다.');
             }
             throw error;
@@ -74,6 +82,14 @@ export class SearchService {
         
     }
 
+    /**
+     * 
+     * @param dto :
+     * - 필터링 요청 시 
+     * age, gender, region (query)
+     * @returns :
+     * statusCode, data: []
+     */
     async getTrendingKeywords(dto: GetTendingKeywordsDto) {
 
         const {age, gender, region} = dto
@@ -102,6 +118,7 @@ export class SearchService {
                 filterConditions.user.userInfo.region = region;
             }
 
+            // 상위 10개 검색어 필터링 리스트 
             const keyword = await this.prismaService.searchkeyword.groupBy({
                 by: ['keyword'],
                 where: filterConditions,
@@ -110,7 +127,7 @@ export class SearchService {
                 },
                 orderBy: {
                     _count: {
-                        keyword: 'desc', 
+                        keyword: 'desc', // 내림차순
                     },
                 },
                 take: 10,
@@ -118,9 +135,9 @@ export class SearchService {
 
             // 순위 및 응답 데이터 생성
             const response = keyword.map((item, index) => ({
-                keyword: item.keyword,
-                count: item._count.keyword,
-                rank: index + 1,
+                keyword: item.keyword, // 해당 검색어
+                count: item._count.keyword, // 검색 횟수 
+                rank: index + 1, // 순위
             }));
 
             return {

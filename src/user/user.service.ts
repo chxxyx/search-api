@@ -10,8 +10,10 @@ export class UserService {
 
     /**
      * 유저 정보 등록 
-     * @param dto (email, age, gender, region)
-     * @returns statusCode, message
+     * @param dto : 
+     * email(String), age(String), gender(String), region(String)
+     * @returns : 
+     * { statusCode, message }
      */
     async insertUser(dto: InsertUserDto) {
 
