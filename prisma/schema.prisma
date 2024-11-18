@@ -1,44 +1,35 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
-// 데이터베이스 연동 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-// 유저 모델 
 model User {
-  id      Int     @id @default(autoincrement())
-  email   String  @unique  // 유저 아이디(이메일)
-  userInfo UserInfo? 
+  id       Int       @id @default(autoincrement())
+  email    String    @unique
+  userInfo UserInfo?
+  keywords Searchkeyword[] // 관계 정의
 }
 
-// 유저정보 모델 
 model UserInfo {
-  user    User?   @relation(fields: [userId], references: [id])
-  userId  Int     @id
-  age     String  
-  gender  String  
-  region  String  
-  
-  @@unique([userId]) // userId를 외래키이자 기본키로 사용
+  userId Int    @id @unique
+  age    String
+  gender String
+  region String
+  user   User   @relation(fields: [userId], references: [id])
 }
 
-// 검색어 모델
 model Searchkeyword {
   id        Int      @id @default(autoincrement())
-  keyword   String                      // 검색어
-  createdAt DateTime @default(now())    // 검색시간
-  user_id   Int?
-  ip        String? 
+  keyword   String
+  createdAt DateTime @default(now())
+  user_id   Int?     // 스칼라 필드 유지
+  ip        String?
 
-  @@unique([keyword, user_id, ip])
+  user      User?    @relation(fields: [user_id], references: [id]) // 관계 정의
+
+  @@unique([keyword, user_id, ip]) // 중복 방지 
 }
