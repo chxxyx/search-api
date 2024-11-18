@@ -33,8 +33,8 @@
 
 # API 사용 방법 
 1. **유저 등록 API (회원)**
-    POST /api/user
-    Request
+    <br>POST /api/user
+    <br>Request
     ```
     {
         "email": "qwer1234@naver.com",
@@ -61,9 +61,9 @@
       }
       ```
 2. **검색어 저장 API (비회원, 회원)**
-    POST /api/search/keywords
+    <br>POST /api/search/keywords
+    <br>Request
     - 비회원
-    Request Body 
     ```
     {
         "keyword": "붕어빵",
@@ -71,7 +71,6 @@
     }
     ```
     - 회원
-    Request Body 
     ``` 
     {
         "keyword": "붕어빵",
@@ -122,14 +121,13 @@
       }
       ```
 
-    3. 인기검색어 조회 API 
-    GET /api/search/trending
-    Request 
-    Query
-    ex) ?age=20&gender=M&region=KOREA
-    age (String)
-    gender (String)
-    region (String)
+4. **인기검색어 조회 API**
+    <br>GET /api/search/trending
+    <br>Request 
+    - Query: ?age=20&gender=M&region=KOREA
+       - age (String)
+       - gender (String)
+       - region (String)
 
     Response
     ```
